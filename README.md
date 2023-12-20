@@ -14,7 +14,7 @@ The first step of the SHA-256 CHF is to convert the plain text (PT) input string
 
 Fig 1.
 
-![](RackMultipart20231220-1-sr14zs_html_138d65bd2f51fd03.png)
+![](https://github.com/BurritoBlankets/SHA256/blob/main/screenshots/FIG1.png)
 
 Fig 2.
 
