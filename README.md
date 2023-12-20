@@ -1,14 +1,11 @@
-**SHA-256 Cryptographic Hashing Function (in C++):**
+SHA-256 Cryptographic Hashing Function (in C++)
+===============================================
 
-**Algorithm Overview**
-
-_José (Pillo) G. Dueñas-Lopez_
-
-**Project Purpose:**
+# Purpose:
 
 To recreate the SHA-256 CHF in C++ to understand the intricate processes of how SHA256 operates, with a particular emphasis on its bitwise operands. C++ was chosen as the implementation language as it bridged lower and higher-level programming languages such as C and Python, allowing for a robust environment to code bitwise operands but also leaving leeway for advanced functions.
 
-**Algorithm Process:**
+# Algorithm Process:
 
 The first step of the SHA-256 CHF is to convert the plain text (PT) input string into its binary representation. Initially posing as a challenge due to an overcomplication of maters, I utilized a vector matrix to complete the above task. Upon discovering [Conte, B (2015) crypto-algorithms [sha256\_test.c]](https://github.com/B-Con/crypto-algorithms/blob/master/sha256_test.c), I decided to do away with my vector matrix and opt for a more straightforward approach, which involved creating my own data types by creating a typedef for unsigned eight-bit integers and unsinged 32-bit integers as "BYTE[s]" and "WORD[s]" (Figure 1). This change enabled an easier conceptualization for my ASCII to binary conundrum, which was quickly resolved by type-casting my string input to my newly defined BYTE data type (Figure 2).
 
@@ -41,11 +38,11 @@ Fig 6.
 
 After the message is appropriately padded, the initial hash values and (K)onstants need to be initialized; this step was personally the most challenging. While the first 16 double words of the message schedule are straightforward to compute, as they consist of an untouched padded binary, the 17-64th iteration of the message schedule was more complex. As per the [FIPS PUB 180-4 (2015) [6.4.2] Secure Hash Standard](http://dx.doi.org/10.6028/NIST.FIPS.180-4), those iterations were to be computed by:
 
-![](https://github.com/BurritoBlankets/SHA256/blob/main/screenshots/FIG7.png)
+![](https://github.com/BurritoBlankets/SHA256/blob/main/screenshots/FIGEQ1.png)
 
 After reviewing 4.1.2 of the Publication, the values of σ1 and σ2 were discovered to be:
 
-![](RackMultipart20231220-1-sr14zs_html_484a72b80c58a351.png)
+![](https://github.com/BurritoBlankets/SHA256/blob/main/screenshots/FIGEQ2.png)
 
 Due to my elementary understanding of binary operands, my research in deciphering the above led me to stumble upon a video by [RedBlockBlue (2022) SHA-256 | COMPLETE Step-By-Step Explanation, ](https://www.youtube.com/watch?v=orIgy2MjqrA)which explained the from a non-mathematical approach. From the references, it was discovered that both sigma functions consisted of a right rotation of a specified value, exclusive or-ed (XOR), by another right rotation of some other value, XOR by a shift right of some additional value.
 
@@ -84,9 +81,8 @@ Fig 12
 ![](https://github.com/BurritoBlankets/SHA256/blob/main/screenshots/FIG12-1.png)
 ![](https://github.com/BurritoBlankets/SHA256/blob/main/screenshots/FIG12-2.png)
 
-**Note:**
-
-As of December 9, 2023, the current version of this code doesn't correctly return the expected output of the SHA256 algorithm. This error can be attributed to an incorrect bug in the message schedule process in which the right shift binary operand incorrectly acts as a rotate right instead of a right shift.
+[!WARNING]  
+> As of December 9, 2023, the current version of this code doesn't correctly return the expected output of the SHA256 algorithm. This error can be attributed to an incorrect bug in the message schedule process in which the right shift binary operand incorrectly acts as a rotate right instead of a right shift.
 
 **In Closing:**
 
