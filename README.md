@@ -1,5 +1,9 @@
 # SHA256
-SHA256 in CPP
+SHA256 in CPP  
+
+Note:
+As of December 9, 2023, the current version of this code doesn’t correctly return the expected output of the SHA256 algorithm. This error can be attributed to an incorrect bug in the message schedule process in which the right shift binary operand incorrectly acts as a rotate right instead of a right shift.
+
 Algorithm Process:
 The first step of the SHA-256 CHF is to convert the plain text (PT) input string into its binary representation. Initially posing as a challenge due to an overcomplication of maters, I utilized a vector matrix to complete the above task. Upon discovering Conte, B (2015) crypto-algorithms [sha256_test.c], I decided to do away with my vector matrix and opt for a more straightforward approach, which involved creating my own data types by creating a typedef for unsigned eight-bit integers and unsinged 32-bit integers as “BYTE[s]” and “WORD[s]” (Figure 1). This change enabled an easier conceptualization for my ASCII to binary conundrum, which was quickly resolved by type-casting my string input to my newly defined BYTE data type (Figure 2).
 
@@ -56,10 +60,7 @@ Fig 11.
            Following the “chunk loop,” the final working hash values are then added to their initial hash values, leaving the last step of the hash computation process to combine all final hash values into a single composite, which can be visualized in Figure 12 below.
 
 Fig 12
-  
 
-Note:
-As of December 9, 2023, the current version of this code doesn’t correctly return the expected output of the SHA256 algorithm. This error can be attributed to an incorrect bug in the message schedule process in which the right shift binary operand incorrectly acts as a rotate right instead of a right shift.
 
 In Closing:
 Overall, this was an enjoyable and challenging process. Going into this project, I didn’t know the difference between a bit, byte, and word; however, now, I am familiar with binary terminology and bitwise operations. My primary source for this project, as listed numerously throughout this report, was the FIPS PUB 180-4; I wanted to rely primarily on this source throughout my project so I could get comfortable with referencing government publications, which I believe this assignment did an excellent job of achieving. Moving forward, I’d like to allocate my winter break to resolving the current bug so that I can comfortably link this assignment to my GitHub to share my step-by-step breakdown of the SHA256 intricacies with others.
