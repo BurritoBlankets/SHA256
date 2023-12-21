@@ -89,17 +89,18 @@ After the Plain Text (PT) message is obtained, it must then be converted to bina
 ```
 
 # Make Padding
-To ensure that SHA256 is  collision resistant; no two diffrent inputs returns the same value, the algorithm incorperates a padding function. The padding process for SHA256 is broken down into four parts. The first part consists of the binary message. Following this, a bit of value '1' is then appended to the padded message. After, a Zeros Padding of length k is then appended. Lastly, the final 64 bits are reserved for the message bit length (M). See Figure 4 for reference, obtained from 5.1.1 of Publication; its implementation can be viewed in Figure 5
+To ensure that SHA256 is  collision resistant; no two diffrent inputs returns the same value, the algorithm incorperates a padding function. The padding process for SHA256 is broken down into four parts. The first part consists of the binary message. Following this, a bit of value '1' is then appended to the padded message. After, a Zeros Padding of length 𝓀 is then appended. Lastly, the final 64 bits are reserved for the message bit length (𝓁). 
 
+The equation provided by FIPS 180-4 5.1.1 equation can be re-written to determine the value of 𝓀.
 
-from FIPS 180-4, 5.1.1 the equation provided is re-written to determine the value of k
+$$𝓁 + 1 + 𝓀 \equiv 448 \bmod{512}$$
+
+$$𝓀 \equiv 447 - 𝓁 \bmod{512}$$
+
+Taking our PT from earlier (abc), our padded binaryPT should look like...
 ```math
-𝓁 + 1 + k \equiv 448 \bmod{512}
-
-𝓁 + 1 + k \equiv 448 \bmod{512}
+\underbrace{01100001}_{\text{`a'}} \quad \underbrace{01100010}_{\text{`b'}} \quad \underbrace{01100011}_{\text{`c'}} \quad 1 \quad \overbrace{00...00}^{\text{423 bits}} \quad \overbrace{00...\underbrace{011000}_{\text{`𝓁=24'}}}^{\text{64 bits}}
 ```
- 1 k  448mod512
-Fig 3.
 
 ![](https://github.com/BurritoBlankets/SHA256/blob/main/screenshots/FIG3.png)
 Fig 4.
