@@ -88,10 +88,10 @@ After the Plain Text (PT) message is obtained, it must then be converted to bina
     }
 ```
 
-# Make Padding
-To ensure that SHA256 is  collision resistant; no two diffrent inputs returns the same value, the algorithm incorperates a padding function. The padding process for SHA256 is broken down into four parts. The first part consists of the binary message. Following this, a bit of value '1' is then appended to the padded message. After, a Zeros Padding of length 𝓀 is then appended. Lastly, the final 64 bits are reserved for the message bit length (𝓁). 
+### Make Padding
+To ensure that SHA256 is  collision resistant; no two diffrent inputs returns the same value, the algorithm incorperates a padding function. The padding process for SHA256 is broken down into four parts. The first part consists of the binary message. Following this, a bit of value '1' is then appended to the padded message. After, a Zeros Padding of length 𝓀 is then appended. Lastly, the final 64 bits are reserved for the binary representation of the message bit length (𝓁). 
 
-The equation provided by FIPS 180-4 5.1.1 equation can be re-written to determine the value of 𝓀.
+The equation provided by [FIPS 180-4 5.1.1](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf#page=18&zoom=auto,-19,549) equation can be re-written to determine the value of 𝓀.
 
 $$𝓁 + 1 + 𝓀 \equiv 448 \bmod{512}$$
 
@@ -99,20 +99,52 @@ $$𝓀 \equiv 447 - 𝓁 \bmod{512}$$
 
 Taking our PT from earlier (abc), our padded binaryPT should look like...
 ```math
-\underbrace{01100001}_{\text{`a'}} \quad \underbrace{01100010}_{\text{`b'}} \quad \underbrace{01100011}_{\text{`c'}} \quad 1 \quad \overbrace{00...00}^{\text{423 bits}} \quad \overbrace{00...\underbrace{011000}_{\text{`𝓁=24'}}}^{\text{64 bits}}
+\underbrace{01100001}_{\text{`a'}} \quad \underbrace{01100010}_{\text{`b'}} \quad \underbrace{01100011}_{\text{`c'}} \quad 1 \quad \overbrace{00...00}^{\text{423 bits}} \quad \overbrace{00...\underbrace{011000}_{\text{`24'}}}^{\text{64 bits}}
+```
+to implement the above, my addPadding function is structured like so 
+```cpp
+/* FIPS PUB 180-4, 5.1.1: Padding the Message                                 */
+void addPadding(const BYTE *message, size_t message_len, BYTE *padded_message, size_t *padded_len)
+{
+  *padded_len = 64;
+
+//Calculated from FIPS PUB page 5.1.1, determines how many zeros are needed
+  size_t padded_size = 64 - ((message_len + 9) % 64);
+
+//Checks if there is enough space
+  if (message_len + padded_size > 64)
+    return;
+
+//Copies message to padding
+  memcpy(padded_message, message, message_len);
+
+//Appends the '1' bit
+  padded_message[message_len] = 0x80;
+
+//Appends the '0' bits
+  memset(padded_message + message_len + 1, 0, padded_size - 9);
+
+//Appends original message length checksum (in bits)
+  for (size_t i = 0; i < 8; ++i)
+    padded_message[56 + i] = static_cast<BYTE>((message_len * 8 ) >> (56 - i * 8));
+}
+```
+### Message Schedule
+The final step of the preprcoessing phase is to generate the message schedule. Consisting of 64 WORDs, the first 16 WORD consist of the padded binary; afterwards, each WORD is computeated using the equation provided below as per [FIPS 180-4 6.4.2](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf#page=27&zoom=auto,-19,591).
+
+```math
+\sigma^{\{512\}}_1(W_{t-2}) \quad + \quad W_{t-7} \quad + \quad \sigma^{\{512\}}_0(W_{t-15}) \quad + \quad W_{t-16} 
 ```
 
-![](https://github.com/BurritoBlankets/SHA256/blob/main/screenshots/FIG3.png)
-Fig 4.
+Fig 6.
 
-![](https://github.com/BurritoBlankets/SHA256/blob/main/screenshots/FIG4.png)
+```math
+\sigma^{\{256\}}_0(x) = ROTR^{7}(x) \quad \oplus \quad ROTR^{18}(x) \quad \oplus \quad SHR^{3}(x)
+```
 
-Fig 5.
-
-![](https://github.com/BurritoBlankets/SHA256/blob/main/screenshots/FIG5.png)
-
-The next step in the SHA256 process would be to initialize the initial hash values and (k) constants. The initial hash values can be obtained by "taking the first thirty-two bits of the fractional parts of the square roots of the first eight prime numbers" (5.3.3). Similarly, the (K)onstants for SHA256 are gathered by "the first thirty-two bits of the fractional parts of the cube roots of the first sixty-four prime numbers" (4.2.2). Fortunately, these values are referenced in hexadecimal format in the Publication, which were conveniently set as global variables in Figure 6 below.
-
+```math
+\sigma^{\{256\}}_1(x) = ROTR^{17}(x) \quad \oplus \quad ROTR^{19}(x) \quad \oplus \quad SHR^{10}(x)
+```
 Fig 6.
 
 ![](https://github.com/BurritoBlankets/SHA256/blob/main/screenshots/FIG6.png)
