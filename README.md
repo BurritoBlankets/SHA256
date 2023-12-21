@@ -1,24 +1,36 @@
-SHA-256 Cryptographic Hashing Function (in C++)
+SHA-256 Algorithm Breakdown (with C++)
 ===============================================
 
-# Purpose:
+>[!WARNING]  
+> As of December 9, 2023, the current version of this code doesn't correctly return the expected output of the SHA256 algorithm. This error can be attributed to an incorrect bug in the message schedule process in which the right shift binary operand incorrectly acts as a rotate right instead of a right shift.
 
-To recreate the SHA-256 CHF in C++ to understand the intricate processes of how SHA256 operates, with a particular emphasis on its bitwise operands. C++ was chosen as the implementation language as it bridged lower and higher-level programming languages such as C and Python, allowing for a robust environment to code bitwise operands but also leaving leeway for advanced functions.
+#Get Binary
+The first step of the SHA-256 CHF is to convert the plain text (PT) input string into its binary representation.
 
-# Algorithm Process:
+```cpp
+//PT -> BINARY:
+    BYTE BinaryPT[8 * strlen(PT)];
+    size_t sizeOfPT = 0;
 
-The first step of the SHA-256 CHF is to convert the plain text (PT) input string into its binary representation. Initially posing as a challenge due to an overcomplication of maters, I utilized a vector matrix to complete the above task. Upon discovering [Conte, B (2015) crypto-algorithms [sha256\_test.c]](https://github.com/B-Con/crypto-algorithms/blob/master/sha256_test.c), I decided to do away with my vector matrix and opt for a more straightforward approach, which involved creating my own data types by creating a typedef for unsigned eight-bit integers and unsinged 32-bit integers as "BYTE[s]" and "WORD[s]" (Figure 1). This change enabled an easier conceptualization for my ASCII to binary conundrum, which was quickly resolved by type-casting my string input to my newly defined BYTE data type (Figure 2).
+    for (size_t i = 0; i < strlen(PT); i++)
+    {
+        BYTE currentChar = PT[i];
+        BinaryPT[sizeOfPT++] = currentChar;
+    }
+```
 
-Fig 1.
+#Make Padding
 
-![](https://github.com/BurritoBlankets/SHA256/blob/main/screenshots/FIG1.png)
+After a binary input is obtained, the message can be padded into a 512-bit BYTE pointer. The padding process for SHA256 is broken down into four parts.The first part consists of the binary message. Following this, a bit of value '1' is then appended to the padded message. After this '1', a Zeros Padding of length k is then appended. Lastly, the final 64 bits are reserved for the message bit length (M). See Figure 4 for reference, obtained from 5.1.1 of Publication; its implementation can be viewed in Figure 5
 
-Fig 2.
 
-![](https://github.com/BurritoBlankets/SHA256/blob/main/screenshots/FIG2.png)
+from FIPS 180-4, 5.1.1 the equation provided is re-written to determine the value of k
+```math
+𝓁 + 1 + k \equiv 448 \bmod{512}
 
-After a binary input is obtained, the message can be padded into a 512-bit BYTE pointer. The padding process for SHA256 is broken down into four parts. The first part consists of the binary message. Following this, a bit of value '1' is then appended to the padded message. After this '1', a Zeros Padding of length k (Figure 3) is then appended. Lastly, the final 64 bits are reserved for the message bit length (M). See Figure 4 for reference, obtained from 5.1.1 of Publication; its implementation can be viewed in Figure 5
-
+𝓁 + 1 + k \equiv 448 \bmod{512}
+```
+ 1 k  448mod512
 Fig 3.
 
 ![](https://github.com/BurritoBlankets/SHA256/blob/main/screenshots/FIG3.png)
@@ -81,8 +93,6 @@ Fig 12
 ![](https://github.com/BurritoBlankets/SHA256/blob/main/screenshots/FIG12-1.png)
 ![](https://github.com/BurritoBlankets/SHA256/blob/main/screenshots/FIG12-2.png)
 
-[!WARNING]  
-> As of December 9, 2023, the current version of this code doesn't correctly return the expected output of the SHA256 algorithm. This error can be attributed to an incorrect bug in the message schedule process in which the right shift binary operand incorrectly acts as a rotate right instead of a right shift.
 
 **In Closing:**
 
