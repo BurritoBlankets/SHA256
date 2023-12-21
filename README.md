@@ -1,11 +1,38 @@
-SHA-256 Algorithm Breakdown (with C++)
-===============================================
+SHA-256 Algorithm Breakdown For Dummies (with C++)
+==================================================
 
 >[!WARNING]  
 > As of December 9, 2023, the current version of this code doesn't correctly return the expected output of the SHA256 algorithm. This error can be attributed to an incorrect bug in the message schedule process in which the right shift binary operand incorrectly acts as a rotate right instead of a right shift.
 
-#Get Binary
-The first step of the SHA-256 CHF is to convert the plain text (PT) input string into its binary representation.
+# Purpose:
+Before jumping into this project I didnt know the diffrence between a bit, byte, or word. Despite this I was determined to move forward with this project so that I could beter understand the intricate processes of how SHA256 operates. Bellow you'll find a step by step process of the algorithm *for dummies* that aims further explain each process at a novice level. 
+
+## Setting Up
+For the first phase of the Secure Hasing Algorithm (SHA)256 you'll want to first define your custom data types, intilize the inital hash values and constants.
+
+### Data Types
+Since SHA256 involves numerours uses of binary operations, the first step to adress would be to create a custom data-types. Since the smallest unit of memory in C/C++ is a byte; for our purposes we'll be dealing with Bytes (8 bits) and Words (2 Bytes).
+```cpp
+/* DATATYPES  *****************************************************************/
+typedef uint8_t BYTE;
+typedef uint32_t WORD;
+```
+
+### Initial Hash Value
+Bellow are the initial hash values for SHA256 in a hexidecimal format, they are obtained by "taking the first thirty-two bits of the fractional parts of the square roots of the first eight prime numbers" [FIPS 180-4 5.3.3](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf#page=20&zoom=auto,-19,663). However for all intents and purposes, these values can be hard-coded like so
+```cpp
+WORD H[8]=
+{
+  0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,
+  0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19
+};
+```
+
+### User Input
+Before any computation takes place you'll want to 
+
+### Get Binary
+1) The first step of the SHA-256 CHF is to convert the plain text (PT) input string into its binary representation.
 
 ```cpp
 //PT -> BINARY:
@@ -19,7 +46,7 @@ The first step of the SHA-256 CHF is to convert the plain text (PT) input string
     }
 ```
 
-#Make Padding
+# Make Padding
 
 After a binary input is obtained, the message can be padded into a 512-bit BYTE pointer. The padding process for SHA256 is broken down into four parts.The first part consists of the binary message. Following this, a bit of value '1' is then appended to the padded message. After this '1', a Zeros Padding of length k is then appended. Lastly, the final 64 bits are reserved for the message bit length (M). See Figure 4 for reference, obtained from 5.1.1 of Publication; its implementation can be viewed in Figure 5
 
