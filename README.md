@@ -92,10 +92,12 @@ After the Plain Text (PT) message is obtained, it must then be converted to bina
 To ensure that SHA256 is  collision resistant; no two diffrent inputs returns the same value, the algorithm incorperates a padding function. The padding process for SHA256 is broken down into four parts. The first part consists of the binary message. Following this, a bit of value '1' is then appended to the padded message. After, a Zeros Padding of length 𝓀 is then appended. Lastly, the final 64 bits are reserved for the binary representation of the message bit length (𝓁). 
 
 The equation provided by [FIPS 180-4 5.1.1](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.180-4.pdf#page=18&zoom=auto,-19,549) equation can be re-written to determine the value of 𝓀.
-
+```math
 $$𝓁 + 1 + 𝓀 \equiv 448 \bmod{512}$$
-
+```
+```math
 $$𝓀 \equiv 447 - 𝓁 \bmod{512}$$
+```
 
 Taking our PT from earlier (abc), our padded binaryPT should look like...
 ```math
